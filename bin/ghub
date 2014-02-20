@@ -1,0 +1,99 @@
+#!/usr/bin/env sh
+
+cmd=$(basename $0)
+function branch() {
+  git rev-parse --abbrev-ref HEAD
+}
+
+function github_url() {
+  giturl=$(git config --get remote.origin.url)
+  [ -z "$giturl" ] && echo "Not a git repository" && exit 1
+ 
+  giturl=${giturl/git\@github\.com\:/https://github.com/}
+  giturl=${giturl/\.git/}
+  echo $giturl
+}
+
+case $1 in
+  search)
+    [ -z $2 ] && echo "usage: $cmd search <spec>" && exit 1
+    open "`github_url`/search?q=$2"
+    ;;
+
+  blame)
+    [ -z $2 ] && echo "usage: $cmd blame <file>" && exit 1
+    open "`github_url`/blame/`branch`/$2"
+    ;;
+
+  commit | co)
+    [ -z $2 ] && echo "usage: $cmd commit <sha1>" && exit 1
+    open "`github_url`/commit/$2"
+    ;;
+
+  issues | issue)
+    if [ -z $2 ]; then
+      open `github_url`/issues
+    elif [[ $2 =~ "^\d+$" ]]; then
+      open "`github_url`/issue/$2"
+    else
+      open "`github_url`/search?q=$2&type=Issues"
+    fi
+    ;;
+
+  wiki)
+    open `github_url`/wiki
+    ;;
+
+  network)
+    open `github_url`/network
+    ;;
+
+  contributors | contribs | contrib)
+    open `github_url`/contributors
+    ;;
+
+  settings | admin)
+    open `github_url`/settings
+    ;;
+
+  collaborators | collaboration | collab)
+    open `github_url`/collaboration
+    ;;
+
+  open)
+    if [ -z $2 ]; then
+      open `github_url`
+    elif [ -e $2 ]; then
+      open `github_url`/blob/`branch`/$2
+    else
+      open "`github_url`/$2"
+    fi
+    ;;
+
+  *)
+    echo "Usage:"
+    echo "  $cmd open"
+    echo ""
+    echo "  $cmd blame <file>"
+    echo "  $cmd open <file>"
+    echo "  $cmd commit <commit>"
+    echo ""
+    echo "  $cmd issues"
+    echo "  $cmd issue <number>"
+    echo "  $cmd issue <keyword>"
+    echo ""
+    echo "  $cmd wiki"
+    echo "  $cmd network"
+    echo "  $cmd contributors"
+    echo ""
+    echo "  $cmd settings"
+    echo "  $cmd collab"
+    echo ""
+    echo "  $cmd search <spec>"
+    echo "  $cmd open <url>"
+    ;;
+
+esac
+
+
+
