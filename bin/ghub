@@ -79,6 +79,10 @@ case $1 in
     open `github_url`/pulse
     ;;
 
+  notifs | notifications)
+    open `github_url`/notifications
+    ;;
+
   pulls)
     open `github_url`/pulls
     ;;
@@ -136,6 +140,9 @@ case $1 in
     echo "  $cmd open <url>"
     echo ""
     echo "  $cmd addremote <user>/<repo>"
+    echo ""
+    echo "  $cmd notifs"
+    echo "  $cmd notifications"
     echo ""
     echo "Non-repo commands:"
     echo "  $cmd newrepo"
