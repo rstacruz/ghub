@@ -79,6 +79,10 @@ case $1 in
     open `github_url`/pulse
     ;;
 
+  pulls)
+    open `github_url`/pulls
+    ;;
+
   network)
     open `github_url`/network
     ;;
@@ -114,6 +118,7 @@ case $1 in
     echo "  $cmd commit <commit>"
     echo ""
     echo "  $cmd issues"
+    echo "  $cmd pulls"
     echo "  $cmd issue <number>"
     echo "  $cmd issue <keyword>"
     echo ""
