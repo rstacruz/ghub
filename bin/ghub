@@ -1,13 +1,19 @@
 #!/usr/bin/env sh
+set -o errexit
 
 cmd=$(basename $0)
 function branch() {
   git rev-parse --abbrev-ref HEAD
 }
 
+function branch_esc() {
+  branch=`branch`
+  echo ${branch/\//;}
+}
+
 function github_url() {
   giturl=$(git config --get remote.origin.url)
-  [ -z "$giturl" ] && echo "Not a git repository" && exit 1
+  [ -z "$giturl" ] && echo "Not a git repository" 1>&2 && exit 1
  
   giturl=${giturl/git\@github\.com\:/https://github.com/}
   giturl=${giturl/\.git/}
@@ -15,6 +21,19 @@ function github_url() {
 }
 
 case $1 in
+  newrepo)
+    open "https://github.com/new"
+    ;;
+
+  addremote)
+    [ -z $2 ] && echo "usage: $cmd addremote <user>/<repo>" && exit 1
+    git remote add origin git@github.com:$2.git
+    ;;
+
+  url)
+    github_url
+    ;;
+
   search)
     [ -z $2 ] && echo "usage: $cmd search <spec>" && exit 1
     open "`github_url`/search?q=$2"
@@ -23,6 +42,18 @@ case $1 in
   blame)
     [ -z $2 ] && echo "usage: $cmd blame <file>" && exit 1
     open "`github_url`/blame/`branch`/$2"
+    ;;
+
+  compare)
+    if [ -z $2 ]; then
+      open "`github_url`/compare"
+    else
+      open "`github_url`/compare/$2...`branch_esc`"
+    fi
+    ;;
+
+  commits)
+    open "`github_url`/commits/`branch`"
     ;;
 
   commit | co)
@@ -44,6 +75,10 @@ case $1 in
     open `github_url`/wiki
     ;;
 
+  pulse)
+    open `github_url`/pulse
+    ;;
+
   network)
     open `github_url`/network
     ;;
@@ -60,7 +95,7 @@ case $1 in
     open `github_url`/collaboration
     ;;
 
-  open)
+  open | o)
     if [ -z $2 ]; then
       open `github_url`
     elif [ -e $2 ]; then
@@ -82,15 +117,23 @@ case $1 in
     echo "  $cmd issue <number>"
     echo "  $cmd issue <keyword>"
     echo ""
+    echo "  $cmd commits"
     echo "  $cmd wiki"
     echo "  $cmd network"
     echo "  $cmd contributors"
+    echo "  $cmd pulse"
+    echo "  $cmd compare [branch]"
     echo ""
     echo "  $cmd settings"
     echo "  $cmd collab"
     echo ""
     echo "  $cmd search <spec>"
     echo "  $cmd open <url>"
+    echo ""
+    echo "  $cmd addremote <user>/<repo>"
+    echo ""
+    echo "Non-repo commands:"
+    echo "  $cmd newrepo"
     ;;
 
 esac
