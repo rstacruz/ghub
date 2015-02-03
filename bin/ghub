@@ -2,13 +2,9 @@
 set -o errexit
 
 cmd=$(basename $0)
+
 function branch() {
   git rev-parse --abbrev-ref HEAD
-}
-
-function branch_esc() {
-  branch=`branch`
-  echo ${branch/\//;}
 }
 
 function github_url() {
@@ -20,23 +16,61 @@ function github_url() {
   echo $giturl
 }
 
+function git_get_commit() {
+  git rev-parse --verify --quiet $1
+}
+
+function git_is_branch() {
+  git branch | grep $1 && echo "1"
+}
+
+function open() {
+  if which xdg-open > /dev/null; then
+    command xdg-open $1
+  elif which open > /dev/null; then
+    command open $1
+  else
+    echo $1
+  fi
+}
+
+function gh_open() {
+  if [ -z $1 ]; then
+    open "`github_url`"
+
+  elif [ "${1:0:1}" = "#" ]; then
+    open "`github_url`/issue/${1:1:9999}"
+
+  elif [ -d $1 ]; then
+    open "`github_url`/tree/`branch`/$1"
+
+  elif [ -f $1 ]; then
+    open "`github_url`/blob/`branch`/$1"
+
+  elif [ -n "$(git_is_branch $1)" ]; then
+    open "`github_url`/commits/$1"
+
+  elif [ -n "$(git_get_commit $1)" ]; then
+    open "`github_url`/commit/$(git_get_commit $1)"
+
+  else
+    open "`github_url`/$1"
+  fi
+}
+
 case $1 in
-  newrepo)
-    open "https://github.com/new"
-    ;;
-
-  addremote)
-    [ -z $2 ] && echo "usage: $cmd addremote <user>/<repo>" && exit 1
-    git remote add origin git@github.com:$2.git
-    ;;
-
   url)
     github_url
     ;;
 
   search)
-    [ -z $2 ] && echo "usage: $cmd search <spec>" && exit 1
+    [ -z $2 ] && echo "usage: $cmd search <query>" && exit 1
     open "`github_url`/search?q=$2"
+    ;;
+
+  issues)
+    [ -z $2 ] && echo "usage: $cmd issues <query>" && exit 1
+    open "`github_url`/search?q=$2&type=Issues"
     ;;
 
   blame)
@@ -44,111 +78,53 @@ case $1 in
     open "`github_url`/blame/`branch`/$2"
     ;;
 
+  remote)
+    [ -z $2 ] && echo "usage: $cmd remote <user>/<repo>" && exit 1
+    git remote add origin http://github.com/$2.git
+    ;;
+
   compare)
     if [ -z $2 ]; then
       open "`github_url`/compare"
     else
-      open "`github_url`/compare/$2...`branch_esc`"
+      open "`github_url`/compare/$2...`branch`"
     fi
     ;;
 
-  commits)
-    open "`github_url`/commits/`branch`"
-    ;;
-
-  commit | co)
-    [ -z $2 ] && echo "usage: $cmd commit <sha1>" && exit 1
-    open "`github_url`/commit/$2"
-    ;;
-
-  issues | issue)
-    if [ -z $2 ]; then
-      open `github_url`/issues
-    elif [[ $2 =~ "^\d+$" ]]; then
-      open "`github_url`/issue/$2"
-    else
-      open "`github_url`/search?q=$2&type=Issues"
-    fi
-    ;;
-
-  wiki)
-    open `github_url`/wiki
-    ;;
-
-  pulse)
-    open `github_url`/pulse
-    ;;
-
-  notifs | notifications)
-    open `github_url`/notifications
-    ;;
-
-  pulls)
-    open `github_url`/pulls
-    ;;
-
-  network)
-    open `github_url`/network
-    ;;
-
-  contributors | contribs | contrib)
-    open `github_url`/contributors
-    ;;
-
-  settings | admin)
-    open `github_url`/settings
-    ;;
-
-  collaborators | collaboration | collab)
-    open `github_url`/collaboration
+  --help | -h)
+    echo "Usage:"
+    echo "  $cmd                    - project page"
+    echo "  $cmd readme.md          - file"
+    echo "  $cmd f09e86fc           - commit"
+    echo "  $cmd master             - branch"
+    echo "  $cmd HEAD~4             - commitish"
+    echo "  $cmd #140               - issue"
+    echo ""
+    echo "Operations:"
+    echo "  $cmd blame <file>"
+    echo "  $cmd search <query>     - search code"
+    echo "  $cmd issues <query>     - search issues"
+    echo "  $cmd compare <branch>   - compare/send pull request"
+    echo ""
+    echo "Other URLs:"
+    echo "  $cmd issues"
+    echo "  $cmd pulls"
+    echo "  $cmd wiki"
+    echo "  $cmd pulse"
+    echo "  $cmd notifications"
+    echo "  $cmd releases"
+    echo "  $cmd tags"
+    echo "  $cmd settings"
     ;;
 
   open | o)
-    if [ -z $2 ]; then
-      open `github_url`
-    elif [ -e $2 ]; then
-      open `github_url`/blob/`branch`/$2
-    else
-      open "`github_url`/$2"
-    fi
+    # alias (`gh readme.md` -> `gh open readme.md`)
+    gh_open $2
     ;;
 
   *)
-    echo "Usage:"
-    echo "  $cmd open"
-    echo ""
-    echo "  $cmd blame <file>"
-    echo "  $cmd open <file>"
-    echo "  $cmd commit <commit>"
-    echo ""
-    echo "  $cmd issues"
-    echo "  $cmd pulls"
-    echo "  $cmd issue <number>"
-    echo "  $cmd issue <keyword>"
-    echo ""
-    echo "  $cmd commits"
-    echo "  $cmd wiki"
-    echo "  $cmd network"
-    echo "  $cmd contributors"
-    echo "  $cmd pulse"
-    echo "  $cmd compare [branch]"
-    echo ""
-    echo "  $cmd settings"
-    echo "  $cmd collab"
-    echo ""
-    echo "  $cmd search <spec>"
-    echo "  $cmd open <url>"
-    echo ""
-    echo "  $cmd addremote <user>/<repo>"
-    echo ""
-    echo "  $cmd notifs"
-    echo "  $cmd notifications"
-    echo ""
-    echo "Non-repo commands:"
-    echo "  $cmd newrepo"
+    gh_open $1
     ;;
 
 esac
-
-
 
