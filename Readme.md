@@ -40,7 +40,9 @@ wget -O ~/bin/ghub https://raw.githubusercontent.com/rstacruz/ghub/master/bin/gh
 chmod +x ~/bin/ghub
 ```
 
-Also see
+## Feature comparison
 
-* [jingweno/gh](https://github.com/jingweno/gh)
-* [paulirish/git-open](https://github.com/paulirish/git-open)
+* 100% shell scripted, like git-open
+* more features vs. [paulirish/git-open](https://github.com/paulirish/git-open)
+* lighter than [jingweno/gh](https://github.com/jingweno/gh)
+* also lighter than [github/hub](https://github.com/github/hub)
