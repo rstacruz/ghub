@@ -33,6 +33,13 @@ Other URLs:
   ghub settings
 ```
 
+## Install
+
+```sh
+wget -O ~/bin/ghub https://raw.githubusercontent.com/rstacruz/ghub/master/bin/ghub
+chmod +x ~/bin/ghub
+```
+
 Also see
 
 * [jingweno/gh](https://github.com/jingweno/gh)
