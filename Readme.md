@@ -35,6 +35,14 @@ Other URLs:
 
 ## Install
 
+OSX/Homebrew:
+
+```sh
+brew install https://raw.githubusercontent.com/rstacruz/ghub/master/homebrew/ghub.rb
+```
+
+Everyone else:
+
 ```sh
 wget -O ~/bin/ghub https://raw.githubusercontent.com/rstacruz/ghub/master/bin/ghub
 chmod +x ~/bin/ghub
