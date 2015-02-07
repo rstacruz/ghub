@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -o errexit
 
+VERSION=1.0.0
 cmd=$(basename $0)
 
 function branch() {
@@ -89,6 +90,10 @@ case $1 in
     else
       open "`github_url`/compare/$2...`branch`"
     fi
+    ;;
+
+  --version | -v)
+    echo $VERSION
     ;;
 
   --help | -h)
