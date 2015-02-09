@@ -41,6 +41,12 @@ OSX/Homebrew:
 brew install https://raw.githubusercontent.com/rstacruz/ghub/master/homebrew/ghub.rb
 ```
 
+npm:
+
+```sh
+npm install -g rstacruz/ghub
+```
+
 Everyone else:
 
 ```sh
