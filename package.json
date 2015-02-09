@@ -1,0 +1,22 @@
+{
+  "name": "ghub",
+  "version": "1.0.0",
+  "description": "Open the current project in GitHub.",
+  "main": "index.js",
+  "bin": {
+    "ghub": "./bin/ghub"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rstacruz/ghub.git"
+  },
+  "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rstacruz/ghub/issues"
+  },
+  "homepage": "https://github.com/rstacruz/ghub"
+}
