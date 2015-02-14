@@ -84,6 +84,14 @@ case $1 in
     git remote add origin http://github.com/$2.git
     ;;
 
+  traffic)
+    open "`github_url`/graphs/traffic"
+    ;;
+
+  frequency)
+    open "`github_url`/graphs/code-frequency"
+    ;;
+
   compare)
     if [ -z $2 ]; then
       open "`github_url`/compare"
