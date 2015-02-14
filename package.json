@@ -1,6 +1,6 @@
 {
   "name": "ghub",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Open the current project in GitHub.",
   "main": "index.js",
   "bin": {
