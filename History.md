@@ -1,3 +1,7 @@
+## v1.1.0
+
+* Add support for `ghub traffic` and `ghub frequency` graphs
+
 ## v1.0.2 - Feb 14, 2015
 
 * Fix opening issues via `ghub #10`
