@@ -40,7 +40,7 @@ function gh_open() {
     open "`github_url`"
 
   elif [ "${1:0:1}" = "#" ]; then
-    open "`github_url`/issue/${1:1:9999}"
+    open "`github_url`/issues/${1:1:9999}"
 
   elif [ -d $1 ]; then
     open "`github_url`/tree/`branch`/$1"
